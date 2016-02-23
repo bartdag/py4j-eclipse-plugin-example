@@ -1,10 +1,6 @@
 package org.py4j.pluginexample.views;
 
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,11 +27,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.py4j.plugin_example.Activator;
 import org.py4j.plugin_example.EclipseRunnable;
-
-import py4j.ClientServer;
-import py4j.GatewayServer;
-import py4j.examples.ExampleEntryPoint;
 
 
 /**
@@ -107,17 +100,7 @@ public class SampleView extends ViewPart {
 	 * The constructor.
 	 */
 	public SampleView() {
-		GatewayServer.turnAllLoggingOn();
-		Logger logger = Logger.getLogger("py4j");
-		logger.setLevel(Level.ALL);
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setLevel(Level.FINEST);
-		logger.addHandler(handler);
-		System.out.println("Starting");
-		ClientServer clientServer = new ClientServer(null);
-		clientServer.startServer(true);
-		pythonRunner = (EclipseRunnable) clientServer.getPythonServerEntryPoint
-				(new Class[] {EclipseRunnable.class});
+		pythonRunner = Activator.getDefault().getPythonRunner();
 	}
 
 	/**
@@ -180,6 +163,7 @@ public class SampleView extends ViewPart {
 	private void makeActions() {
 		action1 = new Action() {
 			public void run() {
+				// Run Python Code
 				pythonRunner.run(viewer);
 			}
 		};
@@ -191,17 +175,6 @@ public class SampleView extends ViewPart {
 		action2 = new Action() {
 			public void run() {
 				showMessage("Action 2 executed");
-				GatewayServer.turnAllLoggingOn();
-				Logger logger = Logger.getLogger("py4j");
-				logger.setLevel(Level.ALL);
-				ConsoleHandler handler = new ConsoleHandler();
-				handler.setLevel(Level.FINEST);
-				logger.addHandler(handler);
-				System.out.println("Starting");
-				ExampleEntryPoint point = new ExampleEntryPoint();
-				ClientServer clientServer = new ClientServer(point);
-				clientServer.startServer(true);
-				System.out.println("STARTED!");
 			}
 		};
 		action2.setText("Action 2");
